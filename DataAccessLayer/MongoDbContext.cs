@@ -19,7 +19,7 @@ namespace BookManagementSystem.DataAccessLayer
 
             var client = new MongoClient(dbsettings);
             if (client != null)
-                _database = client.GetDatabase(Environment.GetEnvironmentVariable("dbName");
+                _database = client.GetDatabase(Environment.GetEnvironmentVariable("dbName"));
         }
 
         public IMongoCollection<Book> Books => _database.GetCollection<Book>("Books");
