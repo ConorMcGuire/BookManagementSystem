@@ -1,6 +1,7 @@
 ﻿using BookManagementSystem.Entities;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using System;
 
 namespace BookManagementSystem.DataAccessLayer
 {
@@ -10,7 +11,7 @@ namespace BookManagementSystem.DataAccessLayer
 
         public MongoDbContext(IOptions<MongoDBSettings> settings)
         {
-            const string connectionUri = "mongodb+srv://Conor:1QthZTZLImj72wvD@soa-ca2.q4m6g5r.mongodb.net/?retryWrites=true&w=majority";
+            string connectionUri = Environment.GetEnvironmentVariable("connectionUrl");
             var dbsettings = MongoClientSettings.FromConnectionString(connectionUri);
             // Set the ServerApi field of the settings object to Stable API version 1
             dbsettings.ServerApi = new ServerApi(ServerApiVersion.V1);
@@ -18,7 +19,7 @@ namespace BookManagementSystem.DataAccessLayer
 
             var client = new MongoClient(dbsettings);
             if (client != null)
-                _database = client.GetDatabase("SOA-CA2");
+                _database = client.GetDatabase(Environment.GetEnvironmentVariable("dbName");
         }
 
         public IMongoCollection<Book> Books => _database.GetCollection<Book>("Books");
