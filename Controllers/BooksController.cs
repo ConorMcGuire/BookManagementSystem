@@ -64,25 +64,71 @@ namespace BookManagementSystem.Controllers
 
         //PSOT: api/Books
         [HttpPost]
-        public ActionResult<BookDTO> AddBook([FromBody] Book book)
+        public ActionResult<BookDTO> AddBook([FromBody] BookDTO bookDTO)
         {
-            if (book == null)
+            if (bookDTO == null)
             {
                 return BadRequest("Invalid book data");
             }
 
-            _bookRepository.AddBook(book);
-            var author = _authorRepository.GetAuthorById(book.AuthorId); //getting author name from other collection using id
+            // Check if the author already exists
+            var existingAuthor = _authorRepository.GetAuthorByName(bookDTO.AuthorName);
 
-            var bookDTO = new BookDTO
+            Author author;
+            if (existingAuthor == null)
             {
-                Title = book.Title,
-                Genre = book.Genre,
-                AuthorName = author?.Name  
+                // Create the author
+                author = new Author { Name = bookDTO.AuthorName };
+                _authorRepository.AddAuthor(author);
+            }
+            else
+            {
+                author = existingAuthor;
+            }
+
+            // Create the book with the author's ID
+            var book = new Book
+            {
+                Title = bookDTO.Title,
+                Genre = bookDTO.Genre,
+                AuthorId = author.Id
             };
 
-            return CreatedAtAction(nameof(GetBookById), new { id = book.Id }, bookDTO);
+            _bookRepository.AddBook(book);
+
+            var responseBookDTO = new BookDTO
+            {
+                Id = book.Id,
+                Title = book.Title,
+                Genre = book.Genre,
+                AuthorName = author.Name
+            };
+
+            return CreatedAtAction(nameof(GetBookById), new { id = book.Id }, responseBookDTO);
         }
+
+
+
+        //[HttpPost]
+        //public ActionResult<BookDTO> AddBook([FromBody] Book book)
+        //{
+        //    if (book == null)
+        //    {
+        //        return BadRequest("Invalid book data");
+        //    }
+
+        //    _bookRepository.AddBook(book);
+        //    var author = _authorRepository.GetAuthorById(book.AuthorId); //getting author name from other collection using id
+
+        //    var bookDTO = new BookDTO
+        //    {
+        //        Title = book.Title,
+        //        Genre = book.Genre,
+        //        AuthorName = author?.Name  
+        //    };
+
+        //    return CreatedAtAction(nameof(GetBookById), new { id = book.Id }, bookDTO);
+        //}
 
         // PUT: api/Books/{id}
         [HttpPut("{id}")]

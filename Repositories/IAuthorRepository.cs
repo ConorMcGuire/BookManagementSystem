@@ -10,7 +10,7 @@ namespace BookManagementSystem.Repositories
         void AddAuthor(Author author);
         void UpdateAuthor(Author author);
         void DeleteAuthor(string id);
-
+        Author GetAuthorByName(string name);
 
         /*
          * IEnumerable<Book> GetAllBooks();

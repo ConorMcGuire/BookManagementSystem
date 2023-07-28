@@ -44,6 +44,9 @@ namespace BookManagementSystem.Repositories
             _context.Authors.DeleteOne(b => b.Id == id);
         }
 
-
+        public Author GetAuthorByName(string name)
+        {
+            return _context.Authors.Find(a => a.Name == name).FirstOrDefault();
+        }
     }
 }
